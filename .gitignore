@@ -1,0 +1,33 @@
+# 1. Конфиденциальные данные
+.env
+.env.local
+.env.*.local
+
+# 2. Локальное виртуальное окружение Python
+venv/
+.venv/
+env/
+ENV/
+pyvenv.cfg
+
+# 3. Файлы кэширования Python компилятора
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# 4. Системные файлы операционных систем
+.DS_Store
+.DS_Store?
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# 5. Кэш и локальные настройки сред разработки
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp

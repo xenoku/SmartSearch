@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Умное хранилище данных</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" type="image/x-icon" href="/static/assets/favicon.ico">
+</head>
+<body>
+    <div class="container">
+        <h1>Хранилище данных с умным векторным поиском</h1>
+        
+        <div class="section">
+            <h3>Управление данными и индексацией</h3>
+            <div class="system-panel">
+                <button class="btn-warning" onclick="executePost('/api/system/seed', 'Генерация тестовой выборки (10 000 векторов)...')">Заполнить тестовыми данными</button>
+                <button class="btn-danger" onclick="executePost('/api/system/clear', 'Полная очистка хранилища...')">Очистить БД</button>
+                <button class="btn-success" onclick="manageIndex('create', 'Построение графа индекса HNSW в СУБД...')">Включить HNSW индекс</button>
+                <button class="btn-danger" onclick="manageIndex('drop', 'Удаление индекса HNSW...')">Выключить HNSW индекс</button>
+            </div>
+            <div class="loader-container">
+                <div class="spinner"></div>
+                <div class="loader-text">Обработка запроса сервером...</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>Добавление документа</h3>
+            <div class="flex-inputs">
+                <input type="text" class="input-field js-doc-input" placeholder="Введите текст нового документа...">
+                <button class="btn-primary" onclick="addDocument()">Добавить</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>Семантический поиск по контексту</h3>
+            <div class="flex-inputs">
+                <input type="text" class="input-field js-search-input" placeholder="Введите поисковый запрос (например: ремонт авто)...">
+                <select class="limit-select" title="Количество результатов">
+                    <option value="1">Топ 1</option>
+                    <option value="3" selected>Топ 3</option>
+                    <option value="5">Топ 5</option>
+                    <option value="10">Топ 10</option>
+                </select>
+                <button class="btn-success" onclick="searchDocuments()">Найти</button>
+            </div>
+            <span class="metrics-output"></span>
+            <div class="js-results-container" style="margin-top: 15px;"></div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

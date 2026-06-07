@@ -1,9 +1,13 @@
+/* ==========================================================================
+   1. ГЛОБАЛЬНЫЕ И БАЗОВЫЕ СТИЛИ (GLOBAL STYLES)
+   ========================================================================== */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 30px;
     background-color: #f5f7fb;
     color: #333;
 }
+
 .container {
     max-width: 900px;
     margin: 0 auto;
@@ -12,12 +16,34 @@ body {
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
-h1 {
+
+h2 {
     color: #2c3e50;
-    text-align: center;
-    margin-bottom: 30px;
+    margin-top: 0;
+    margin-bottom: 20px;
     font-weight: 600;
 }
+
+/* Универсальные вспомогательные классы (Utility Classes) */
+.hidden { display: none !important; }
+.w-100 { width: 100% !important; }
+.text-center { text-align: center !important; }
+.cell-bold { font-weight: bold !important; }
+.cursor-pointer { cursor: pointer !important; }
+.text-muted-gray { color: #666 !important; }
+
+/* Вспомогательные отступы (Margin Utilities) */
+.mt-10 { margin-top: 10px !important; }
+.mt-15 { margin-top: 15px !important; }
+.mt-30 { margin-top: 30px !important; }
+.mb-20 { margin-bottom: 20px !important; }
+.mb-30 { margin-bottom: 30px !important; }
+.p-10-15 { padding: 10px 15px !important; }
+
+
+/* ==========================================================================
+   2. КОМПОНЕНТЫ ИНТЕРФЕЙСА (FORM & UI COMPONENTS)
+   ========================================================================== */
 .section {
     border: 1px solid #e2e8f0;
     padding: 20px;
@@ -25,18 +51,14 @@ h1 {
     margin-bottom: 25px;
     background: #fff;
 }
-h3 {
-    margin-top: 0;
-    color: #34495e;
-    border-bottom: 2px solid #3498db;
-    padding-bottom: 5px;
-}
+
 .flex-inputs {
     display: flex;
     gap: 15px;
     margin-bottom: 10px;
     align-items: center;
 }
+
 .input-field {
     flex-grow: 1;
     padding: 10px;
@@ -44,14 +66,17 @@ h3 {
     border-radius: 6px;
     font-size: 14px;
 }
+
 .limit-select {
     padding: 10px;
     border: 1px solid #cbd5e1;
     border-radius: 6px;
     font-size: 14px;
     background: white;
-    width: 100px;
+    width: auto;
 }
+
+/* Кнопки управления (Buttons) */
 button {
     padding: 10px 20px;
     border: none;
@@ -59,70 +84,477 @@ button {
     font-size: 14px;
     cursor: pointer;
     font-weight: bold;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
 }
+
 button:disabled {
     background-color: #cbd5e1 !important;
     color: #94a3b8 !important;
     cursor: not-allowed;
     transform: none !important;
 }
+
 .btn-primary { background-color: #3498db; color: white; }
 .btn-primary:hover:not(:disabled) { background-color: #2980b9; }
-.btn-danger { background-color: #e74c3c; color: white; }
-.btn-danger:hover:not(:disabled) { background-color: #c0392b; }
+
+.btn-secondary { background-color: #6c757d; color: white; }
+.btn-secondary:hover:not(:disabled) { background-color: #5a6268; }
+
 .btn-success { background-color: #2ecc71; color: white; }
 .btn-success:hover:not(:disabled) { background-color: #27ae60; }
-.btn-warning { background-color: #f39c12; color: white; }
-.btn-warning:hover:not(:disabled) { background-color: #d35400; }
-.system-panel {
+
+.btn-danger { background-color: #e74c3c; color: white; }
+.btn-danger:hover:not(:disabled) { background-color: #c0392b; }
+
+.btn-warning { background-color: #ffc107; color: #000; }
+.btn-warning:hover:not(:disabled) { background-color: #e0a800; }
+
+.btn-info { background-color: #17a2b8; color: white; }
+.btn-info:hover:not(:disabled) { background-color: #138496; }
+
+
+/* ==========================================================================
+   3. БЛОК ФИЛЬТРАЦИИ МЕТАДАННЫХ (METADATA FILTERS GRID)
+   ========================================================================== */
+.search-filters-fieldset {
+    margin-top: 15px;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 6px;
+}
+
+.search-filters-legend {
+    font-size: 13px;
+    color: #555;
+    padding: 0 8px;
+    font-weight: 500;
+}
+
+.search-filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.filter-control-group {
     display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+.filter-label {
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.filter-input {
+    width: 100%;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 13px;
+}
+
+.checkbox-control-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+
+/* ==========================================================================
+   4. ВЫДАЧА РЕЗУЛЬТАТОВ ПОИСКА (SEARCH RESULTS COMPONENT)
+   ========================================================================== */
+.results-container {
     margin-top: 15px;
 }
+
 .result-item {
     background: #f8fafc;
-    padding: 12px;
+    padding: 15px;
     border-left: 4px solid #3498db;
-    margin-top: 10px;
+    margin-top: 12px;
     border-radius: 0 6px 6px 0;
+    border-top: 1px solid #e2e8f0;
+    border-right: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
 }
-.meta-info {
+
+.result-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.result-title-link {
+    font-size: 16px;
+    font-weight: bold;
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.1s ease;
+}
+.result-title-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+.result-item-sub-meta {
     font-size: 12px;
-    color: #7f8c8d;
-    margin-top: 5px;
+    color: #777;
+    margin-top: 4px;
 }
+
 .metrics-output {
     font-weight: bold;
     color: #2c3e50;
-    margin-top: 10px;
-    display: block;
-}
-.loader-container {
-    display: none;
-    align-items: center;
-    gap: 15px;
     margin-top: 15px;
-    padding: 10px;
-    background-color: #f8fafc;
-    border-radius: 6px;
-    border: 1px dashed #3498db;
+    display: block;
+    font-size: 13px;
 }
-.spinner {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #3498db;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    animation: spin 1s linear infinite;
-}
-.loader-text {
-    font-size: 14px;
+
+.results-empty-stub {
+    color: #666;
+    text-align: center;
+    padding: 25px;
     font-weight: 500;
-    color: #2c3e50;
 }
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+
+/* Теги релевантности RRF и Рангов */
+.vsr-score-badge {
+    text-align: right;
+    font-size: 12px;
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.rank-info-block {
+    margin-top: 10px;
+    font-size: 11px;
+    color: #888;
+    background: #f1f5f9;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+.rank-semantic-val { color: #007bff; font-weight: bold; }
+.rank-keyword-val { color: #28a745; font-weight: bold; }
+.vsr-score-val { color: #e74c3c; font-weight: bold; }
+
+.vsr-tooltip-trigger {
+    cursor: help;
+    border-bottom: 1px dotted #e74c3c;
+}
+
+
+/* ==========================================================================
+   5. АДМИНИСТРАТИВНАЯ ПАНЕЛЬ И РЕПОЗИТОРИЙ (ADMIN PANEL & DATA TABLE)
+   ========================================================================== */
+.auth-flex-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.admin-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.admin-actions-flex-row {
+    display: flex;
+    gap: 10px;
+    padding: 5px;
+    flex-wrap: wrap;
+}
+
+.admin-upload-flex-column {
+    display: flex;
+    margin-top: 10px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.admin-file-input-row {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.admin-file-input-row .input-field {
+    padding: 5px;
+}
+
+.admin-link-wrapper {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.admin-redirect-link {
+    color: #666;
+    font-size: 12px;
+    text-decoration: none;
+}
+.admin-redirect-link:hover {
+    text-decoration: underline;
+}
+
+.admin-metrics {
+    align-self: center;
+    font-size: 13px;
+    color: #666;
+    margin-left: 10px;
+    font-weight: 500;
+}
+
+/* Стилизация таблицы (Data Table Component) */
+.admin-table-container {
+    margin-top: 15px;
+    overflow-x: auto;
+}
+
+.admin-data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    text-align: left;
+    table-layout: fixed;
+}
+
+/* Ширина колонок таблицы */
+.admin-table-container .col-w-7  { width: 7%; }
+.admin-table-container .col-w-45 { width: 45%; }
+.admin-table-container .col-w-18 { width: 18%; }
+.admin-table-container .col-w-10 { width: 10%; }
+
+.admin-data-table thead tr {
+    background: #f1f1f1;
+    border-bottom: 2px solid #ddd;
+}
+
+.admin-data-table th, .admin-data-table td {
+    padding: 10px 8px;
+    vertical-align: middle;
+}
+
+.th-sortable {
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s ease;
+}
+.th-sortable:hover {
+    background: #e5e5e5;
+}
+
+.admin-data-table tbody tr {
+    border-bottom: 1px solid #eee;
+    transition: background 0.1s ease;
+}
+.admin-data-table tbody tr:hover {
+    background: #f9f9f9;
+}
+
+.table-empty-stub-cell {
+    text-align: center;
+    padding: 15px;
+    color: #777;
+    font-weight: 500;
+}
+
+.table-doc-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+}
+.table-doc-link:hover {
+    text-decoration: underline;
+}
+
+.table-locale-badge {
+    font-size: 10px;
+    color: #999;
+    display: block;
+    margin-top: 2px;
+}
+
+.text-ellipsis-block {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    width: 100%;
+}
+
+/* Табличные действия и пагинация */
+.actions-flex-container {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.actions-flex-container .btn-table-edit,
+.actions-flex-container .btn-table-delete {
+    margin: 0;
+    flex: 1 1 auto;
+    min-width: 65px;
+    text-align: center;
+    padding: 5px 8px;
+    font-size: 11px;
+    border-radius: 4px;
+}
+
+.btn-table-edit { background: #ffc107; color: #000; }
+.btn-table-edit:hover { background: #e0a800; }
+
+.btn-table-delete { background: #e74c3c; color: #fff; }
+.btn-table-delete:hover { background: #c0392b; }
+
+.pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    font-size: 13px;
+}
+
+.pagination-info { color: #666; font-weight: 500; }
+.pagination-buttons { display: flex; gap: 5px; }
+
+.pagination-buttons button {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+
+/* ==========================================================================
+   6. МОДАЛЬНЫЕ ОКНА И ОВЕРЛЕИ (MODAL WINDOWS COMPONENT)
+   ========================================================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 24px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    transform: translateY(-20px);
+    transition: transform 0.2s ease;
+}
+
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
+}
+
+.modal-header {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 18px;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.modal-body-flex-column {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+}
+
+
+/* ==========================================================================
+   7. СИСТЕМА УВЕДОМЛЕНИЙ И ТОСТОВ (TOAST NOTIFICATIONS COMPONENT)
+   ========================================================================== */
+.toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 9999;
+}
+
+.toast-item {
+    background: #333;
+    color: #fff;
+    padding: 14px 24px;
+    border-radius: 6px;
+    font-size: 13px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    min-width: 260px;
+    max-width: 380px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.toast-item.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast-success {
+    background: #2ecc71;
+    border-left: 5px solid #27ae60;
+}
+
+.toast-error {
+    background: #e74c3c;
+    border-left: 5px solid #c0392b;
+}
+
+.toast-close-btn {
+    margin-left: 15px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 1;
+    opacity: 0.7;
+    transition: opacity 0.1s ease;
+}
+.toast-close-btn:hover {
+    opacity: 1;
 }

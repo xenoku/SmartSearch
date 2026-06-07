@@ -24,6 +24,8 @@ Thumbs.db
 Desktop.ini
 
 # 5. Кэш и локальные настройки сред разработки
+wiki_dataset/
+storage/
 .idea/
 .vscode/
 *.suo

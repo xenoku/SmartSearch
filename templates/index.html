@@ -2,52 +2,65 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Умное хранилище данных</title>
+    <title>Интеллектуальный поиск документов</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="icon" type="image/x-icon" href="/static/assets/favicon.ico">
 </head>
 <body>
     <div class="container">
-        <h1>Хранилище данных с умным векторным поиском</h1>
+        <h2>Поисковая система документов</h2>
         
-        <div class="section">
-            <h3>Управление данными и индексацией</h3>
-            <div class="system-panel">
-                <button class="btn-warning" onclick="executePost('/api/system/seed', 'Генерация тестовой выборки (10 000 векторов)...')">Заполнить тестовыми данными</button>
-                <button class="btn-danger" onclick="executePost('/api/system/clear', 'Полная очистка хранилища...')">Очистить БД</button>
-                <button class="btn-success" onclick="manageIndex('create', 'Построение графа индекса HNSW в СУБД...')">Включить HNSW индекс</button>
-                <button class="btn-danger" onclick="manageIndex('drop', 'Удаление индекса HNSW...')">Выключить HNSW индекс</button>
-            </div>
-            <div class="loader-container">
-                <div class="spinner"></div>
-                <div class="loader-text">Обработка запроса сервером...</div>
-            </div>
-        </div>
-
-        <div class="section">
-            <h3>Добавление документа</h3>
+        <form id="js-search-form" class="section">
             <div class="flex-inputs">
-                <input type="text" class="input-field js-doc-input" placeholder="Введите текст нового документа...">
-                <button class="btn-primary" onclick="addDocument()">Добавить</button>
-            </div>
-        </div>
-
-        <div class="section">
-            <h3>Семантический поиск по контексту</h3>
-            <div class="flex-inputs">
-                <input type="text" class="input-field js-search-input" placeholder="Введите поисковый запрос (например: ремонт авто)...">
-                <select class="limit-select" title="Количество результатов">
-                    <option value="1">Топ 1</option>
+                <input type="text" class="input-field js-search-input" placeholder="Введите контекстный или лексический запрос (например: отчет по продажам)..." required>
+                <select class="limit-select limit-select-count" title="Количество результатов">
                     <option value="3" selected>Топ 3</option>
                     <option value="5">Топ 5</option>
                     <option value="10">Топ 10</option>
                 </select>
-                <button class="btn-success" onclick="searchDocuments()">Найти</button>
+                <button type="submit" class="btn-success">Найти документ</button>
             </div>
-            <span class="metrics-output"></span>
-            <div class="js-results-container" style="margin-top: 15px;"></div>
+
+            <fieldset class="search-filters-fieldset">
+                <legend class="search-filters-legend">Фильтры поиска</legend>
+                <div class="search-filters-grid">
+                    <div class="filter-control-group">
+                        <label class="filter-label">Автор / Издатель</label>
+                        <input type="text" class="filter-input js-filter-author" placeholder="Имя автора">
+                    </div>
+                    <div class="filter-control-group">
+                        <label class="filter-label">Название / Расширение</label>
+                        <input type="text" class="filter-input js-filter-filename" placeholder="Например: .pdf">
+                    </div>
+                    <div class="filter-control-group">
+                        <label class="filter-label">Написан (с)</label>
+                        <input type="date" class="filter-input js-created-after">
+                    </div>
+                    <div class="filter-control-group">
+                        <label class="filter-label">Написан (до)</label>
+                        <input type="date" class="filter-input js-created-before">
+                    </div>
+                    <div class="filter-control-group">
+                        <label class="filter-label">Добавлен в базу (с)</label>
+                        <input type="date" class="filter-input js-added-after">
+                    </div>
+                    <div class="filter-control-group">
+                        <label class="filter-label">Добавлен в базу (до)</label>
+                        <input type="date" class="filter-input js-added-before">
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="metrics-output"></div>
+            <div class="js-results-container results-container"></div>
+        </form>
+        
+        <div class="admin-link-wrapper">
+            <a href="/admin" class="admin-redirect-link">Панель управления (Администратор)</a>
         </div>
     </div>
+
+    <div id="js-toast-container" class="toast-container"></div>
 
     <script src="/static/js/app.js"></script>
 </body>

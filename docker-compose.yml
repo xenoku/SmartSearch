@@ -1,4 +1,5 @@
 services:
+  # 1. Контур СУБД: Гибридная база данных PostgreSQL с расширением pgvector
   postgres:
     image: pgvector/pgvector:pg16
     container_name: smart_search_db
@@ -6,18 +7,60 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: vector_db
-    ports:
-      - "5432:5432"
+    expose:
+      - "5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d vector_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
+  # 2. Контур Нейросетей: Локальный ИИ-сервер Ollama
   ollama:
     image: ollama/ollama:latest
     container_name: smart_search_ollama
-    ports:
-      - "11434:11434"
+    expose:
+      - "11434"
     volumes:
       - ollama_data:/root/.ollama
+
+  ollama-model-loader:
+    image: alpine:latest
+    container_name: smart_search_model_loader
+    entrypoint: >
+      /bin/sh -c "
+      echo 'Ожидание запуска ИИ-сервера Ollama...';
+      while ! nc -z ollama 11434; do sleep 2; done;
+      echo 'ИИ-сервер готов. Запуск автоматического скачивания модели...';
+      apk add --no-cache curl;
+      curl -X POST http://ollama:11434/api/pull -d '{\"name\": \"paraphrase-multilingual\"}';
+      echo 'Модель успешно загружена!';
+      "
+    depends_on:
+      - ollama
+
+  # 3. Контур Приложения: Бэкенд-служба распределенного поиска на FastAPI
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smart_search_backend
+    # Точка входа в систему
+    ports:
+      - "8085:8085"
+    volumes:
+      - ./storage:/app/storage
+    environment:
+      - DATABASE_URL=postgresql://user:password@postgres:5432/vector_db
+      - OLLAMA_URL=http://ollama:11434
+      - MODEL_NAME=paraphrase-multilingual
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ollama-model-loader:
+        condition: service_completed_successfully
 
 volumes:
   pgdata:

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Панель администратора — Smart Search</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" type="image/x-icon" href="/static/assets/favicon.ico">
+</head>
+<body>
+    <div class="container">
+        
+        <div id="admin-auth-block" class="section">
+            <h2>Вход в панель управления</h2>
+            <form id="js-admin-login-form" class="auth-flex-form">
+                <input type="password" id="js-admin-pass" class="input-field" placeholder="Введите пароль администратора..." required>
+                
+                <div class="checkbox-control-wrapper">
+                    <input type="checkbox" id="js-remember-me">
+                    <label for="js-remember-me" class="filter-label cursor-pointer">Входить без пароля (Запомнить меня)</label>
+                </div>
+                
+                <button type="submit" class="btn-primary w-100">Войти</button>
+            </form>
+        </div>
+
+        <div id="admin-panel-block" class="section hidden">
+            <div class="admin-panel-header">
+                <h2>Панель управления СУБД и Хранилищем</h2>
+                <button id="js-btn-logout" class="btn-secondary">Выйти</button>
+            </div>
+
+            <div class="search-filters-fieldset mb-20">
+                <legend class="search-filters-legend">Обслуживание и конфигурация системы</legend>
+                <div class="admin-actions-flex-row">
+                    <button id="js-btn-seed" class="btn-warning">Сгенерировать тестовую базу данных (10k записей)</button>
+                    <button id="js-btn-hnsw-enable" class="btn-info">Включить HNSW-индекс</button>
+                    <button id="js-btn-hnsw-disable" class="btn-secondary">Выключить HNSW-индекс</button>
+                    <button id="js-btn-clear" class="btn-danger p-10-15">Полная очистка (БД + Диск)</button>
+                    <span class="admin-metrics"></span>
+                </div>
+            </div>
+
+            <div class="search-filters-fieldset mb-30">
+                <legend class="search-filters-legend">Загрузка новых документов (PDF, Word, TXT)</legend>
+                <div class="admin-upload-flex-column">
+                    <div class="admin-file-input-row">
+                        <input type="file" id="js-file-selector" class="input-field js-file-input" accept=".txt,.pdf,.docx">
+                        <button id="js-btn-upload" class="btn-primary">Загрузить и векторизовать</button>
+                    </div>
+                    <div class="checkbox-control-wrapper">
+                        <input type="checkbox" id="js-upload-folder-mode">
+                        <label for="js-upload-folder-mode" class="filter-label cursor-pointer">Режим загрузки директории (папки)</label>
+                    </div>
+                </div>
+                
+                <div class="search-filters-grid mt-15">
+                    <div class="filter-control-group">
+                        <label class="filter-label">Название документа</label>
+                        <input type="text" class="filter-input js-doc-title" placeholder="Кастомное название">
+                    </div>
+                    <div class="filter-control-group">
+                        <label class="filter-label">Автор документа</label>
+                        <input type="text" class="filter-input js-doc-author" placeholder="Имя автора">
+                    </div>
+                    <div class="filter-control-group">
+                        <label class="filter-label">Дата написания (создания)</label>
+                        <input type="date" class="filter-input js-doc-created">
+                    </div>
+                </div>
+            </div>
+
+            <div class="search-filters-fieldset">
+                <legend class="search-filters-legend">Репозиторий документов базы данных</legend>
+                
+                <div class="flex-inputs mt-10">
+                    <input type="text" id="js-table-mask" class="input-field" placeholder="Поиск по маске (ID, Название, Автор)...">
+                </div>
+
+                <div class="admin-table-container">
+                    <table class="admin-data-table">
+                        <colgroup>
+                            <col class="col-w-7">
+                            <col class="col-w-45"> 
+                            <col class="col-w-18">
+                            <col class="col-w-10">
+                            <col class="col-w-10">
+                            <col class="col-w-10">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th data-sort="id" class="th-sortable js-th-sort">ID <span id="sort-icon-id">▼</span></th>
+                                <th data-sort="file_name" class="th-sortable js-th-sort">Название / Ссылка <span id="sort-icon-file_name"></span></th>
+                                <th data-sort="author" class="th-sortable js-th-sort">Автор <span id="sort-icon-author"></span></th>
+                                <th data-sort="created_at" class="th-sortable js-th-sort">Написан <span id="sort-icon-created_at"></span></th>
+                                <th data-sort="added_at" class="th-sortable js-th-sort">Добавлен <span id="sort-icon-added_at"></span></th>
+                                <th class="text-center">Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="js-admin-table-body">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination-container">
+                    <span id="js-pagination-info" class="pagination-info">Страница 1 из 1 (Всего элементов: 0)</span>
+                    <div class="pagination-buttons">
+                        <button class="btn-secondary" id="js-btn-prev">Назад</button>
+                        <button class="btn-secondary" id="js-btn-next">Вперед</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-30 text-center">
+            <a href="/" class="admin-redirect-link">← Вернуться к поиску</a>
+        </div>
+    </div>
+
+    <div id="js-edit-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">Редактирование метаданных документа (ID: <span id="modal-doc-id"></span>)</div>
+            
+            <div class="modal-body-flex-column">
+                <div class="filter-control-group">
+                    <label class="filter-label">Название документа</label>
+                    <input type="text" id="modal-input-title" class="filter-input" placeholder="Введите название">
+                </div>
+                <div class="filter-control-group">
+                    <label class="filter-label">Автор</label>
+                    <input type="text" id="modal-input-author" class="filter-input" placeholder="Укажите автора">
+                </div>
+                <div class="filter-control-group">
+                    <label class="filter-label">Дата написания / создания</label>
+                    <input type="date" id="modal-input-created" class="filter-input">
+                </div>
+                <div class="filter-control-group">
+                    <label class="filter-label">Дата добавления в базу данных (системная)</label>
+                    <input type="date" id="modal-input-added" class="filter-input">
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button id="js-modal-btn-cancel" class="btn-secondary">Отмена</button>
+                <button id="js-modal-btn-submit" class="btn-success">Сохранить изменения</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="js-toast-container" class="toast-container"></div>
+
+    <script src="/static/js/admin.js"></script>
+</body>
+</html>

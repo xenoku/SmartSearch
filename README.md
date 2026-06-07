@@ -49,7 +49,7 @@
 
 1. Клонируйте репозиторий на свой компьютер:
    ```bash
-   git clone https://github.com
+   git clone https://github.com/xenoku/SmartSearch
    cd smart_search
    ```
 2. Запустите автоматический конвейер сборки:

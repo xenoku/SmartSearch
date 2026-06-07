@@ -23,7 +23,8 @@ ehthumbs.db
 Thumbs.db
 Desktop.ini
 
-# 5. Кэш и локальные настройки сред разработки
+# 5. Кэш, мусор и локальные настройки сред разработки
+tree.py
 wiki_dataset/
 storage/
 .idea/

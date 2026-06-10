@@ -144,7 +144,7 @@ async function loadTableData(page = 1) {
         const response = await fetch(`/api/admin/documents?${queryParams.toString()}`, {
             headers: getAuthHeaders()
         });
-        if (!response.ok) throw new Error("Ошибка загрузки данных репозитория СУБД");
+        if (!response.ok) throw new Error("Ошибка загрузки данных репозитория документов");
         const data = await response.json();
         
         totalPages = Math.ceil(data.total / data.size) || 1;
@@ -343,7 +343,7 @@ async function logoutAdmin() {
 }
 
 async function seedDatabase() {
-    if (!confirm("Вы уверены, что хотите сгенерировать 10 000 тестовых записей? Текущие данные будут стерты.")) return;
+    if (!confirm("Вы уверены, что хотите сгенерировать 10 000 тестовых записей?")) return;
     const btnSeed = document.getElementById("js-btn-seed");
     const metrics = document.querySelector('.admin-metrics');
     

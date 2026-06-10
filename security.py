@@ -54,14 +54,13 @@ async def verify_admin_access(
             detail="Требуется авторизация. Передайте Bearer-токен в Authorization или войдите через панель."
         )
         
-    # Поиск записи о сессии в реляционной СУБД
+    # Поиск записи о сессии в СУБД
     session_record = db.query(AdminSession).filter(AdminSession.token == incoming_token).first()
     
     if not session_record:
         raise HTTPException(status_code=403, detail="Невалидный или аннулированный токен доступа.")
         
-    # КРИТИЧЕСКИЙ ФИКС: Сравнение дат переведено на строгий стандарт временных зон UTC [2, 3]
-    # Это предотвращает мгновенное закрытие сессий при развертывании в контейнерах Docker [2, 3]
+    # Сравнение дат зон UTC
     current_utc_time = datetime.now(timezone.utc).replace(tzinfo=None)
     if session_record.expires_at < current_utc_time:
         db.delete(session_record)

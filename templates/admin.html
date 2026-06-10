@@ -25,12 +25,12 @@
 
         <div id="admin-panel-block" class="section hidden">
             <div class="admin-panel-header">
-                <h2>Панель управления СУБД и Хранилищем</h2>
+                <h2>Панель управления Хранилищем</h2>
                 <button id="js-btn-logout" class="btn-secondary">Выйти</button>
             </div>
 
             <div class="search-filters-fieldset mb-20">
-                <legend class="search-filters-legend">Обслуживание и конфигурация системы</legend>
+                <legend class="search-filters-legend">Управление конфигурацией системы</legend>
                 <div class="admin-actions-flex-row">
                     <button id="js-btn-seed" class="btn-warning">Сгенерировать тестовую базу данных (10k записей)</button>
                     <button id="js-btn-hnsw-enable" class="btn-info">Включить HNSW-индекс</button>
@@ -45,11 +45,11 @@
                 <div class="admin-upload-flex-column">
                     <div class="admin-file-input-row">
                         <input type="file" id="js-file-selector" class="input-field js-file-input" accept=".txt,.pdf,.docx">
-                        <button id="js-btn-upload" class="btn-primary">Загрузить и векторизовать</button>
+                        <button id="js-btn-upload" class="btn-primary">Загрузить</button>
                     </div>
                     <div class="checkbox-control-wrapper">
                         <input type="checkbox" id="js-upload-folder-mode">
-                        <label for="js-upload-folder-mode" class="filter-label cursor-pointer">Режим загрузки директории (папки)</label>
+                        <label for="js-upload-folder-mode" class="filter-label cursor-pointer">Пакетная (множественная) загрузка</label>
                     </div>
                 </div>
                 
@@ -70,7 +70,7 @@
             </div>
 
             <div class="search-filters-fieldset">
-                <legend class="search-filters-legend">Репозиторий документов базы данных</legend>
+                <legend class="search-filters-legend">Репозиторий документов в хранилище</legend>
                 
                 <div class="flex-inputs mt-10">
                     <input type="text" id="js-table-mask" class="input-field" placeholder="Поиск по маске (ID, Название, Автор)...">

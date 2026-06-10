@@ -1,23 +1,23 @@
 echo "======================================================================"
-echo "ЗАПУСК ЭКОСИСТЕМЫ ХРАНИЛИЩА ДОКУМЕНТОВ С УМНЫМ ПОИСКОМ"
+echo "LAUNCHING SMART SEARCH DOCUMENT STORAGE ECOSYSTEM"
 echo "======================================================================"
 echo
 
 if [ ! -f .env ]; then
     if [ -f .env.example ]; then
         cp .env.example .env
-        echo "[OK] Файл конфигурации .env успешно создан."
+        echo "[OK] Configuration file .env successfully created."
     else
-        echo "[ОШИБКА] Не найден .env.example!"
+        echo "[ERROR] Template file .env.example not found!"
         exit 1
     fi
 fi
 
-echo "Очистка старых контейнеров..."
+echo "Removing old containers..."
 docker compose down
 
-echo "Сборка бэкенда и запуск стека..."
+echo "Building backend and launching the stack..."
 docker compose up --build -d
 
-echo "Отслеживание загрузки ИИ-модели..."
+echo "Tracking AI model download progress..."
 docker logs -f smart_search_model_loader

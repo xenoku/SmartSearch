@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 
 from database import get_db
 from models import AdminSession
+from config import settings
 
 # Инициализация схемы парсинга заголовка Authorization (Bearer токен)
 bearer_scheme = HTTPBearer(auto_error=False)
@@ -53,6 +54,10 @@ async def verify_admin_access(
             status_code=401, 
             detail="Требуется авторизация. Передайте Bearer-токен в Authorization или войдите через панель."
         )
+
+    # Проверка статичного токена
+    if incoming_token == settings.api_bearer_token:
+        return True
         
     # Поиск записи о сессии в СУБД
     session_record = db.query(AdminSession).filter(AdminSession.token == incoming_token).first()

@@ -14,11 +14,14 @@ from typing import Optional, List
 from fastapi import APIRouter, Depends, HTTPException, File, UploadFile
 from sqlalchemy import text
 from sqlalchemy.orm import Session
+from datetime import datetime
 
 from database import get_db
 from models import Document
 from schemas import SearchFiltersPayload, DocumentUploadMetadata
 from security import verify_admin_access
+from services import extract_text_from_file, get_embedding, detect_text_language
+
 
 # Инициализация логгера uvicorn для фиксации поисковых метрик и ошибок SQL
 logger = logging.getLogger("uvicorn.error")
@@ -49,7 +52,6 @@ async def search_documents(
     параллельные SQL-запросы к инвертированному (GIN) и граф-ориентированному (HNSW) 
     индексам, после чего ранжирует кандидатов по формуле RRF.
     """
-    from services import get_embedding, detect_text_language
 
     try:
         query_str = filters.query
@@ -118,7 +120,7 @@ async def search_documents(
         else:
             where_keyword = "WHERE " + fts_clause
 
-        # --- АРХИТЕКТУРНЫЙ ШЛЮЗ ПЕРЕКЛЮЧЕНИЯ КОНТУРОВ ПЛАНИРОВЩКА (Query Routing) ---
+        # --- АРХИТЕКТУРНЫЙ ШЛЮЗ ПЕРЕКЛЮЧЕНИЯ КОНТУРОВ ПЛАНИРОВЩКА ---
         if is_hard_filter_active:
             db.execute(text("SET LOCAL enable_seqscan = on;"))
         else:
@@ -194,9 +196,6 @@ async def upload_documents_bulk(
     текстовый слой, определяет язык локали, генерирует эмбеддинги через Ollama 
     и атомарно сохраняет структурированную запись и физический файл.
     """
-    from services import extract_text_from_file, get_embedding, detect_text_language
-    from models import Document
-    from datetime import datetime
 
     try:
         success_count = 0
@@ -270,4 +269,4 @@ async def upload_documents_bulk(
         # Каскадный откат незавершенной транзакции при общем сбое
         db.rollback()
         logger.error(f"Критическая авария пакетного ETL конвейера: {str(e)}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Внутренний сбой сервера импорта: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Внутренний сбой сервера: {str(e)}")

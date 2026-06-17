@@ -6,6 +6,7 @@
 """
 
 import io
+import os
 import httpx
 import json
 import re
@@ -112,7 +113,6 @@ def extract_text_from_file(file_bytes: bytes, file_name: str) -> str:
     Raises:
         ValueError: При обнаружении пустого контента или неподдерживаемого формата.
     """
-    import os
     ext = os.path.splitext(file_name)[1].lower()
     text_content = ""
     

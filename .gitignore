@@ -24,6 +24,7 @@ Thumbs.db
 Desktop.ini
 
 # 5. Кэш, мусор и локальные настройки сред разработки
+tests/
 tree.py
 wiki_dataset/
 storage/

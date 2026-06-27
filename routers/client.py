@@ -7,6 +7,7 @@
 """
 
 import os
+import re
 import time
 import random
 import logging
@@ -58,14 +59,18 @@ async def search_documents(
         limit_val = filters.limit
 
         # Динамическое определение языкового контекста поискового запроса
-        detected_query_lang = detect_text_language(query_str)
+        if re.search('[а-яА-Я]', query_str):
+            db_regconfig = "russian"
+        elif re.match(r'^[a-zA-Z0-9\s\.,!\?\'"\(\)\-]+$', query_str):
+            db_regconfig = "english"
+        else:
+            detected_query_lang = detect_text_language(query_str)
+            db_regconfig = LANG_CONFIG_MAPPING.get(detected_query_lang.lower(), "simple")
         
         # Получение плотного вектора признаков из локального ИИ-сервера Ollama
         query_vector = await get_embedding(query_str)
         
         start_time = time.time()
-        
-        db_regconfig = LANG_CONFIG_MAPPING.get(detected_query_lang.lower(), "simple")
         
         sql_params = {
             "vector": str(query_vector),
@@ -217,14 +222,14 @@ async def upload_documents_bulk(
                 # Чтение бинарного потока данных из HTTP-запроса
                 fb = await file.read()
                 
-                # Парсинг сырого текстового слоя специализированным сервисом
+                # Парсинг сырого текстового слоя
                 text_layer = extract_text_from_file(fb, pure_filename)
                 cleaned_text = " ".join(text_layer.split())
                 
-                # Генерация плотного эмбеддинга признаков через локальную нейросеть
+                # Генерация эмбеддинга признаков через локальную нейросеть
                 v = await get_embedding(cleaned_text)
                 
-                # Формирование уникального безопасного имени файла для изоляции в хранилище storage
+                # Формирование уникального безопасного имени файла для изоляции в хранилище
                 safe_filename = f"{int(time.time())}_{random.randint(100,999)}_{pure_filename}"
                 storage_path = os.path.join("storage", safe_filename)
                 
